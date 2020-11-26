@@ -1,0 +1,159 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Description": "Policies for S3 Storage",
+	"Resources": {
+		"TIReadUploadImages": {
+			"Type": "AWS::IAM::ManagedPolicy",
+			"DeletionPolicy": "Retain",
+			"Properties": {
+				"ManagedPolicyName": "TI-ReadUploadImages-Policy",
+				"Description": "Allow Lambda to retrieve uploaded picture - used by lambdas",
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Sid": "VisualEditor0",
+							"Effect": "Allow",
+							"Action": "s3:GetObject",
+							"Resource": {
+								"Fn::Join": [
+									"",
+									[
+										{
+											"Fn::ImportValue": "TIS3UploadARN"
+										},
+										"/*"
+									]
+								]
+							}
+						}
+					]
+				}
+			}
+		},
+		"TIS3PublicAddJSON": {
+			"Type": "AWS::IAM::ManagedPolicy",
+			"DeletionPolicy": "Retain",
+			"Properties": {
+				"ManagedPolicyName": "TI-S3PublicAddJSON-Policy",
+				"Description": "Allows Spring S3 cache to post JSON for circuit breaker pattern",
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Sid": "VisualEditor0",
+							"Effect": "Allow",
+							"Action": [
+								"s3:PutObject",
+								"s3:GetObject"
+							],
+							"Resource": {
+								"Fn::Join": [
+									"",
+									[
+										{
+											"Fn::ImportValue": "TIS3PublicARN"
+										},
+										"/*"
+									]
+								]
+							}
+						}
+					]
+				}
+			}
+		},
+		"TIUploadToPrivateFolder": {
+			"Type": "AWS::IAM::ManagedPolicy",
+			"DeletionPolicy": "Retain",
+			"Properties": {
+				"ManagedPolicyName": "TI-UploadToPrivateFolder-Policy",
+				"Description": "Allow lambda to create a signedURl",
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Sid": "VisualEditor0",
+							"Effect": "Allow",
+							"Action": "s3:PutObject",
+							"Resource": {
+								"Fn::Join": [
+									"",
+									[
+										{
+											"Fn::ImportValue": "TIS3UploadARN"
+										},
+										"/*"
+									]
+								]
+							}
+						}
+					]
+				}
+			}
+		},
+		"TIWriteToPublicS3": {
+			"Type": "AWS::IAM::ManagedPolicy",
+			"DeletionPolicy": "Retain",
+			"Properties": {
+				"ManagedPolicyName": "TI-WriteToPublicS3-Policy",
+				"Description": "Public S3 write from lambda",
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Sid": "VisualEditor0",
+							"Effect": "Allow",
+							"Action": "s3:PutObject",
+							"Resource": {
+								"Fn::Join": [
+									"",
+									[
+										{
+											"Fn::ImportValue": "TIS3PublicARN"
+										},
+										"/*"
+									]
+								]
+							}
+						}
+					]
+				}
+			}
+		}
+	},
+	"Outputs": {
+		"TIReadUploadImagesPolicy": {
+			"Value": {
+				"Ref": "TIReadUploadImages"
+			},
+			"Export": {
+				"Name": "TIReadUploadImagesPolicy"
+			}
+		},
+		"TIS3PublicAddJSONPolicy": {
+			"Value": {
+				"Ref": "TIS3PublicAddJSON"
+			},
+			"Export": {
+				"Name": "TIS3PublicAddJSONPolicy"
+			}
+		},
+		"TIUploadToPrivateFolderPolicy": {
+			"Value": {
+				"Ref": "TIUploadToPrivateFolder"
+			},
+			"Export": {
+				"Name": "TIUploadToPrivateFolderPolicy"
+			}
+		},
+		"TIWriteToPublicS3Policy": {
+			"Value": {
+				"Ref": "TIWriteToPublicS3"
+			},
+			"Export": {
+				"Name": "TIWriteToPublicS3Policy"
+			}
+		}
+	}
+}

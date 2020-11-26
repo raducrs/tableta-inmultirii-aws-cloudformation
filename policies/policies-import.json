@@ -1,0 +1,205 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Description": "Various Policies",
+	"Properties": {
+		"TIECRRepositoryARN": {
+			"Type": "String",
+			"Description": "Repository ARN"
+		},
+		"TIImageChalkBlackboardARN": {
+			"Type": "String",
+			"Description": "TI ImageChalk Blackboard ARN"
+		},
+		"TILocationPopulateLambda": {
+			"Type": "String",
+			"Description": "Lambda Function to be remotely invoked ARN"
+		},
+		"TISESIdentity": {
+			"Type": "String",
+			"Description": "SES identity mail ends in /"
+		}
+	},
+	"Resources": {
+		"TIECRPushPull": {
+			"Type": "AWS::IAM::ManagedPolicy",
+			"DeletionPolicy": "Retain",
+			"Properties": {
+				"ManagedPolicyName": "TI-ECR-PushPull-Policy",
+				"Description": "Allows push and pull to repository of tabletainmultirii",
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Sid": "VisualEditor0",
+							"Effect": "Allow",
+							"Action": [
+								"ecr:GetDownloadUrlForLayer",
+								"ecr:BatchGetImage",
+								"ecr:CompleteLayerUpload",
+								"ecr:UploadLayerPart",
+								"ecr:InitiateLayerUpload",
+								"ecr:BatchCheckLayerAvailability",
+								"ecr:PutImage"
+							],
+							"Resource": {
+								"Ref": "TIECRRepositoryARN"
+							}
+						},
+						{
+							"Sid": "VisualEditor1",
+							"Effect": "Allow",
+							"Action": "ecr:GetAuthorizationToken",
+							"Resource": "*"
+						}
+					]
+				}
+			}
+		},
+		"TIGetLayerChalkBoard": {
+			"Type": "AWS::IAM::ManagedPolicy",
+			"DeletionPolicy": "Retain",
+			"Properties": {
+				"ManagedPolicyName": "TI-GetLayerChalkBoard-Policy",
+				"Description": "Allows Lambda to Use Layers",
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Sid": "VisualEditor0",
+							"Effect": "Allow",
+							"Action": "lambda:GetLayerVersion",
+							"Resource": {
+								"Fn::Join": [
+									"",
+									[
+										{
+											"Ref": "TIImageChalkBlackboardARN"
+										},
+										":*"
+									]
+								]
+							}
+						},
+						{
+							"Sid": "VisualEditor1",
+							"Effect": "Allow",
+							"Action": [
+								"lambda:ListLayerVersions",
+								"lambda:ListLayers"
+							],
+							"Resource": "*"
+						}
+					]
+				}
+			}
+		},
+		"TIInvokeLambda": {
+			"Type": "AWS::IAM::ManagedPolicy",
+			"DeletionPolicy": "Retain",
+			"Properties": {
+				"ManagedPolicyName": "TI-InvokeLambda-Policy",
+				"Description": "Allow async invocation of another lambda function",
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Sid": "VisualEditor0",
+							"Effect": "Allow",
+							"Action": [
+								"lambda:InvokeFunction",
+								"lambda:InvokeAsync"
+							],
+							"Resource": {
+								"Ref": "TILocationPopulateLambda"
+							}
+						}
+					]
+				}
+			}
+		},
+		"TISESCreateUpdateSend": {
+			"Type": "AWS::IAM::ManagedPolicy",
+			"DeletionPolicy": "Retain",
+			"Properties": {
+				"ManagedPolicyName": "TI-SESCreateUpdateSend-Policy",
+				"Description": "Public S3 write from lambda",
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Sid": "VisualEditor0",
+							"Effect": "Allow",
+							"Action": "ses:SendEmail",
+							"Resource": {
+								"Ref": "TISESIdentity"
+							}
+						},
+						{
+							"Sid": "VisualEditor1",
+							"Effect": "Allow",
+							"Action": "ses:SendEmail",
+							"Resource": {
+								"Ref": "TISESIdentity"
+							}
+						},
+						{
+							"Sid": "VisualEditor2",
+							"Effect": "Allow",
+							"Action": [
+								"ses:UpdateTemplate",
+								"ses:CreateTemplate",
+								"ses:GetTemplate"
+							],
+							"Resource": "*"
+						},
+						{
+							"Sid": "VisualEditor3",
+							"Effect": "Allow",
+							"Action": [
+								"ses:SendEmail",
+								"ses:SendTemplatedEmail"
+							],
+							"Resource": {
+								"Ref": "TISESIdentity"
+							}
+						}
+					]
+				}
+			}
+		}
+	},
+	"Outputs": {
+		"TIECRPushPullPolicy": {
+			"Value": {
+				"Ref": "TIECRPushPull"
+			},
+			"Export": {
+				"Name": "TIECRPushPullPolicy"
+			}
+		},
+		"TIGetLayerChalkBoardPolicy": {
+			"Value": {
+				"Ref": "TIGetLayerChalkBoard"
+			},
+			"Export": {
+				"Name": "TIGetLayerChalkBoardPolicy"
+			}
+		},
+		"TIInvokeLambdaPolicy": {
+			"Value": {
+				"Ref": "TIInvokeLambda"
+			},
+			"Export": {
+				"Name": "TIInvokeLambdaPolicy"
+			}
+		},
+		"TIInvokeLambdaPolicy": {
+			"Value": {
+				"Ref": "TIInvokeLambda"
+			},
+			"Export": {
+				"Name": "TIInvokeLambdaPolicy"
+			}
+		}
+	}
+}

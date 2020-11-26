@@ -1,0 +1,94 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Image Chalk
+Resources:
+  TIS3Upload:
+    Type: 'AWS::S3::Bucket'
+    DeletionPolicy: Retain
+    Properties:
+     BucketName: tableta-inmultirii-upload
+     Tags:
+       - Key: project
+         Value: tabletainmultirii
+       - Key: resource
+         Value: s3
+     AccessControl: Private
+     PublicAccessBlockConfiguration:
+       BlockPublicAcls: True
+       BlockPublicPolicy: True
+       IgnorePublicAcls: True
+       RestrictPublicBuckets: True
+     CorsConfiguration:
+       CorsRules:
+       - AllowedHeaders:
+         - '*'
+         AllowedMethods:
+         - PUT
+         - HEAD
+         AllowedOrigins:
+         - '*'
+         ExposedHeaders: []
+  TIS3Public:
+    Type: 'AWS::S3::Bucket'
+    DeletionPolicy: Retain
+    Properties:
+     BucketName: tableta-inmultirii-public
+     Tags:
+       - Key: project
+         Value: tabletainmultirii
+       - Key: resource
+         Value: s3
+     AccessControl: PublicRead
+     PublicAccessBlockConfiguration:
+       BlockPublicAcls: False
+       BlockPublicPolicy: False
+       IgnorePublicAcls: False
+       RestrictPublicBuckets: False
+     WebsiteConfiguration:
+        ErrorDocument: error.html
+        IndexDocument: index.html
+     CorsConfiguration:
+       CorsRules:
+       - AllowedHeaders:
+         - '*'
+         AllowedMethods:
+         - GET
+         - HEAD
+         AllowedOrigins:
+         - '*'
+         ExposedHeaders: []
+  TIS3PublicPolicy:       
+    Type: AWS::S3::BucketPolicy
+    DeletionPolicy: Retain
+    Properties: 
+      Bucket:
+        Ref: TIS3Public
+      PolicyDocument: 
+        Version: '2012-10-17'
+        Statement:
+          - Action:
+            - 's3:GetObject'
+            Effect: Allow
+            Principal: '*'
+            Resource:
+              'Fn::Join':
+              - ''
+              - - 'arn:aws:s3:::'
+                - Ref: TIS3Public
+                - /*
+Outputs:
+    TIS3Upload:
+      Export:
+        Name: TIS3Upload
+      Value: !Ref TIS3Upload
+    TIS3UploadARN:
+      Export:
+        Name: TIS3UploadARN
+      Value: !GetAtt TIS3Upload.Arn
+    TIS3Public:
+      Export:
+        Name: TIS3Public
+      Value: !Ref TIS3Public
+    TIS3PublicARN:
+      Export:
+        Name: TIS3PublicARN
+      Value: !GetAtt TIS3Public.Arn

@@ -1,0 +1,198 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: DynamoDB TI Tables
+Resources:
+  TITargetedDonations:
+    Type: 'AWS::DynamoDB::Table'
+    DeletionPolicy: Retain
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: DonationId
+          AttributeType: S
+        - AttributeName: LocId
+          AttributeType: S
+        - AttributeName: Status
+          AttributeType: S
+        - AttributeName: UserId
+          AttributeType: S
+      TableName: TI-TargetedDonations
+      KeySchema:
+        - AttributeName: DonationId
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+        - IndexName: UserIdProj-index
+          KeySchema:
+            - AttributeName: UserId
+              KeyType: HASH
+          Projection:
+            ProjectionType: INCLUDE
+            NonKeyAttributes:
+              - Donation
+              - Status
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: LocIdProj-index
+          KeySchema:
+            - AttributeName: LocId
+              KeyType: HASH
+            - AttributeName: Status
+              KeyType: RANGE
+          Projection:
+            ProjectionType: INCLUDE
+            NonKeyAttributes:
+              - DonationId
+              - Donation
+              - User
+              - Status
+              - Details
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+  TIStats:
+    Type: 'AWS::DynamoDB::Table'
+    DeletionPolicy: Retain
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: Statistic
+          AttributeType: S
+      TableName: TI-Stats
+      KeySchema:
+        - AttributeName: Statistic
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+  TISchoolsStat:
+    Type: 'AWS::DynamoDB::Table'
+    DeletionPolicy: Retain
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: dateKey
+          AttributeType: S
+      TableName: TI-Schools-Stat
+      KeySchema:
+        - AttributeName: dateKey
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+  TIPUserLoc:
+    Type: 'AWS::DynamoDB::Table'
+    DeletionPolicy: Retain
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: LocId
+          AttributeType: S
+        - AttributeName: PUser
+          AttributeType: S
+      TableName: TI-PUser-Loc
+      KeySchema:
+        - AttributeName: PUser
+          KeyType: HASH
+        - AttributeName: LocId
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+        - IndexName: LocId-index
+          KeySchema:
+            - AttributeName: LocId
+              KeyType: HASH
+          Projection:
+            ProjectionType: INCLUDE
+            NonKeyAttributes:
+              - Location
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+  TILocationDonationsRejected:
+    Type: 'AWS::DynamoDB::Table'
+    DeletionPolicy: Retain
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: DonationId
+          AttributeType: S
+        - AttributeName: LocId
+          AttributeType: S
+      TableName: TI-LocationDonationsRejected
+      KeySchema:
+        - AttributeName: LocId
+          KeyType: HASH
+        - AttributeName: DonationId
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+  TILocationDonations:
+    Type: 'AWS::DynamoDB::Table'
+    DeletionPolicy: Retain
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: DonationId
+          AttributeType: S
+        - AttributeName: LocId
+          AttributeType: S
+      TableName: TI-LocationDonations
+      KeySchema:
+        - AttributeName: LocId
+          KeyType: HASH
+        - AttributeName: DonationId
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+Outputs:
+    TITargetedDonations:
+      Export:
+        Name: TITargetedDonations
+      Value: !Ref TITargetedDonations
+    TITargetedDonationsARN:
+      Export:
+        Name: TITargetedDonationsARN
+      Value: !GetAtt TITargetedDonations.Arn
+    TIStats:
+      Export:
+        Name: TIStats
+      Value: !Ref TIStats
+    TIStatsARN:
+      Export:
+        Name: TIStatsARN
+      Value: !GetAtt TIStats.Arn
+    TISchoolsStat:
+      Export:
+        Name: TISchoolsStat
+      Value: !Ref TISchoolsStat
+    TISchoolsStatARN:
+      Export:
+        Name: TISchoolsStatARN
+      Value: !GetAtt TISchoolsStat.Arn
+    TIPUserLoc:
+      Export:
+        Name: TIPUserLoc
+      Value: !Ref TIPUserLoc
+    TIPUserLocARN:
+      Export:
+        Name: TIPUserLocARN
+      Value: !GetAtt TIPUserLoc.Arn
+    TILocationDonationsRejected:
+      Export:
+        Name: TILocationDonationsRejected
+      Value: !Ref TILocationDonationsRejected
+    TILocationDonationsRejectedARN:
+      Export:
+        Name: TILocationDonationsRejectedARN
+      Value: !GetAtt TILocationDonationsRejected.Arn
+    TILocationDonations:
+      Export:
+        Name: TILocationDonations
+      Value: !Ref TILocationDonations
+    TILocationDonationsARN:
+      Export:
+        Name: TILocationDonationsARN
+      Value: !GetAtt TILocationDonations.Arn

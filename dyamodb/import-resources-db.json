@@ -1,0 +1,44 @@
+[
+  {
+      "ResourceType":"AWS::DynamoDB::Table",
+      "LogicalResourceId":"TITargetedDonations",
+      "ResourceIdentifier": {
+        "TableName":"TI-TargetedDonations"
+      }
+  },
+  {
+      "ResourceType":"AWS::DynamoDB::Table",
+      "LogicalResourceId":"TIStats",
+      "ResourceIdentifier": {
+        "TableName":"TI-Stats"
+      }
+  },
+  {
+      "ResourceType":"AWS::DynamoDB::Table",
+      "LogicalResourceId":"TISchoolsStat",
+      "ResourceIdentifier": {
+        "TableName":"TI-Schools-Stat"
+      }
+  },
+  {
+      "ResourceType":"AWS::DynamoDB::Table",
+      "LogicalResourceId":"TIPUserLoc",
+      "ResourceIdentifier": {
+        "TableName":"TI-PUser-Loc"
+      }
+  },
+  {
+      "ResourceType":"AWS::DynamoDB::Table",
+      "LogicalResourceId":"TILocationDonationsRejected",
+      "ResourceIdentifier": {
+        "TableName":"TI-LocationDonationsRejected"
+      }
+  },
+  {
+      "ResourceType":"AWS::DynamoDB::Table",
+      "LogicalResourceId":"TILocationDonations",
+      "ResourceIdentifier": {
+        "TableName":"TI-LocationDonations"
+      }
+  }
+]

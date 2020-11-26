@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Image Chalk
+Resources:
+  TIS3Upload:
+    Type: 'AWS::S3::Bucket'
+    DeletionPolicy: Retain
+    Properties:
+     BucketName: tableta-inmultirii-upload
+     Tags:
+       - Key: project
+         Value: tabletainmultirii
+       - Key: resource
+         Value: s3
+     AccessControl: Private
+     PublicAccessBlockConfiguration:
+       BlockPublicAcls: True
+       BlockPublicPolicy: True
+       IgnorePublicAcls: True
+       RestrictPublicBuckets: True
+     CorsConfiguration:
+       CorsRules:
+       - AllowedHeaders:
+         - '*'
+         AllowedMethods:
+         - PUT
+         - HEAD
+         AllowedOrigins:
+         - '*'
+         ExposedHeaders: []
+  TIS3Public:
+    Type: 'AWS::S3::Bucket'
+    DeletionPolicy: Retain
+    Properties:
+     BucketName: tableta-inmultirii-public
+     Tags:
+       - Key: project
+         Value: tabletainmultirii
+       - Key: resource
+         Value: s3
+     AccessControl: PublicRead
+     PublicAccessBlockConfiguration:
+       BlockPublicAcls: False
+       BlockPublicPolicy: False
+       IgnorePublicAcls: False
+       RestrictPublicBuckets: False
+     WebsiteConfiguration:
+        ErrorDocument: error.html
+        IndexDocument: index.html
+     CorsConfiguration:
+       CorsRules:
+       - AllowedHeaders:
+         - '*'
+         AllowedMethods:
+         - GET
+         - HEAD
+         AllowedOrigins:
+         - '*'
+         ExposedHeaders: []

@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: EC2 Spring Instance
+Parameters:
+  WorkstationIp:
+    Type: String
+    Description: The IP address of the workstation that can SSH into the instance.
+  Key:
+    Type: String
+    Description: The key used to access the instance.
+Resources:
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: "Internet Group"
+      GroupDescription: "SSH and web traffic in, all traffic out."
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '8080'
+          ToPort: '8080'
+          CidrIp:  0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp:  !Sub ${WorkstationIp}/32
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+  SpringInstance:
+    Type: 'AWS::EC2::Instance'
+    DeletionPolicy: Retain
+    Properties:
+      # Coresponds Amazon Linux AMI 2018.03.0.20200918.0 x86_64 HVM gp2
+      ImageId: ami-0474863011a7d1541
+      # free tier
+      InstanceType: t2.micro
+      KeyName: !Ref Key
+      SecurityGroupIds:
+        - Ref: InstanceSecurityGroup
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: 8
+Outputs:
+  PublicIp:
+    Value:
+      Fn::GetAtt:
+        - SpringInstance
+        - PublicDnsName
+    Description: Server's PublicDnsName
+    Export:
+      Name: SpringPublicDnsName

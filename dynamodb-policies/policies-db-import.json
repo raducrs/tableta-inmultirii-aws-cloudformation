@@ -1,0 +1,291 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Description": "Policies for DynamoDB Tables",
+	"Resources": {
+		"TIDynamoDBRead": {
+			"Type": "AWS::IAM::ManagedPolicy",
+			"DeletionPolicy": "Retain",
+			"Properties": {
+				"ManagedPolicyName": "TI-DynamoDBRead-Policy",
+				"Description": "Allow read of DynamoDB table - query - used by lambdas",
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Sid": "VisualEditor0",
+							"Effect": "Allow",
+							"Action": [
+								"dynamodb:BatchGetItem",
+								"dynamodb:GetItem",
+								"dynamodb:Query"
+							],
+							"Resource": [
+								{
+									"Fn::Join": [
+										"/",
+										[
+											{
+												"Fn::ImportValue": "TITargetedDonationsARN"
+											},
+											"index/*"
+										]
+									]
+								},
+								{
+									"Fn::ImportValue": "TITargetedDonationsARN"
+								}
+							]
+						},
+						{
+							"Sid": "VisualEditor1",
+							"Effect": "Allow",
+							"Action": [
+								"dynamodb:GetItem",
+								"dynamodb:Query"
+							],
+							"Resource": [
+								{
+									"Fn::Join": [
+										"/",
+										[
+											{
+												"Fn::ImportValue": "TIPUserLocARN"
+											},
+											"index/*"
+										]
+									]
+								},
+								{
+									"Fn::ImportValue": "TIPUserLocARN"
+								}
+							]
+						},
+						{
+							"Sid": "VisualEditor2",
+							"Effect": "Allow",
+							"Action": [
+								"dynamodb:GetItem",
+								"dynamodb:Query"
+							],
+							"Resource": {
+								"Fn::ImportValue": "TIPUserLocARN"
+							}
+						},
+						{
+							"Sid": "VisualEditor3",
+							"Effect": "Allow",
+							"Action": [
+								"dynamodb:BatchGetItem",
+								"dynamodb:GetItem",
+								"dynamodb:Query"
+							],
+							"Resource": {
+								"Fn::ImportValue": "TILocationDonationsARN"
+							}
+						},
+						{
+							"Sid": "VisualEditor4",
+							"Effect": "Allow",
+							"Action": "dynamodb:BatchGetItem",
+							"Resource": {
+								"Fn::ImportValue": "TIStatsARN"
+							}
+						}
+					]
+				}
+			}
+		},
+		"TIDynamoDBWrite": {
+			"Type": "AWS::IAM::ManagedPolicy",
+			"DeletionPolicy": "Retain",
+			"Properties": {
+				"ManagedPolicyName": "TI-DynamoDBWrite-Policy",
+				"Description": "Write to DynamoDB tables - putItem - used by lambdas",
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Sid": "VisualEditor0",
+							"Effect": "Allow",
+							"Action": "dynamodb:PutItem",
+							"Resource": {
+								"Fn::ImportValue": "TITargetedDonationsARN"
+							}
+						},
+						{
+							"Sid": "VisualEditor1",
+							"Effect": "Allow",
+							"Action": [
+								"dynamodb:BatchWriteItem",
+								"dynamodb:DeleteItem"
+							],
+							"Resource": {
+								"Fn::ImportValue": "TILocationDonationsARN"
+							}
+						},
+						{
+							"Sid": "VisualEditor2",
+							"Effect": "Allow",
+							"Action": "dynamodb:UpdateItem",
+							"Resource": {
+								"Fn::ImportValue": "TITargetedDonationsARN"
+							}
+						},
+						{
+							"Sid": "VisualEditor3",
+							"Effect": "Allow",
+							"Action": "dynamodb:UpdateItem",
+							"Resource": {
+								"Fn::ImportValue": "TIStatsARN"
+							}
+						},
+						{
+							"Sid": "VisualEditor4",
+							"Effect": "Allow",
+							"Action": "dynamodb:PutItem",
+							"Resource": {
+								"Fn::ImportValue": "TILocationDonationsRejectedARN"
+							}
+						}
+					]
+				}
+			}
+		},
+		"TIDynamoDBSchoolStat": {
+			"Type": "AWS::IAM::ManagedPolicy",
+			"DeletionPolicy": "Retain",
+			"Properties": {
+				"ManagedPolicyName": "TI-DynamoDB-SchoolStat-Policy",
+				"Description": "Read/Write from/to DynamoDB tables - used by  Spring backend",
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Sid": "VisualEditor0",
+							"Effect": "Allow",
+							"Action": [
+								"dynamodb:PutItem",
+								"dynamodb:GetItem",
+								"dynamodb:Scan",
+								"dynamodb:Query"
+							],
+							"Resource": [
+								{
+									"Fn::ImportValue": "TISchoolsStatARN"
+								},
+								{
+									"Fn::Join": [
+										"/",
+										[
+											{
+												"Fn::ImportValue": "TISchoolsStatARN"
+											},
+											"index/*"
+										]
+									]
+								}
+							]
+						},
+						{
+							"Sid": "VisualEditor1",
+							"Effect": "Allow",
+							"Action": [
+								"dynamodb:GetItem",
+								"dynamodb:Scan"
+							],
+							"Resource": [
+								{
+									"Fn::ImportValue": "TIStatsARN"
+								},
+								{
+									"Fn::Join": [
+										"/",
+										[
+											{
+												"Fn::ImportValue": "TIStatsARN"
+											},
+											"index/*"
+										]
+									]
+								}
+							]
+						}
+					]
+				}
+			}
+		},
+		"TIDynamoDBTargetedDonationsStream": {
+			"Type": "AWS::IAM::ManagedPolicy",
+			"DeletionPolicy": "Retain",
+			"Properties": {
+				"ManagedPolicyName": "TI-DynamoDB-TargetedDonationsStream-Policy",
+				"Description": "Subscribe to flow of DB change - used by notification lambda",
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Sid": "VisualEditor0",
+							"Effect": "Allow",
+							"Action": [
+								"dynamodb:GetShardIterator",
+								"dynamodb:DescribeStream",
+								"dynamodb:GetRecords"
+							],
+							"Resource": {
+								"Fn::Join": [
+									"/",
+									[
+										{
+											"Fn::ImportValue": "TITargetedDonationsARN"
+										},
+										"stream/*"
+									]
+								]
+							}
+						},
+						{
+							"Sid": "VisualEditor1",
+							"Effect": "Allow",
+							"Action": "dynamodb:ListStreams",
+							"Resource": "*"
+						}
+					]
+				}
+			}
+		}
+	},
+	"Outputs": {
+		"TIDynamoDBReadPolicy": {
+			"Value": {
+				"Ref": "TIDynamoDBRead"
+			},
+			"Export": {
+				"Name": "TIDynamoDBReadPolicy"
+			}
+		},
+		"TIDynamoDBWritePolicy": {
+			"Value": {
+				"Ref": "TIDynamoDBWrite"
+			},
+			"Export": {
+				"Name": "TIDynamoDBWritePolicy"
+			}
+		},
+		"TIDynamoDBSchoolStatPolicy": {
+			"Value": {
+				"Ref": "TIDynamoDBSchoolStat"
+			},
+			"Export": {
+				"Name": "TIDynamoDBSchoolStatPolicy"
+			}
+		},
+		"TIDynamoDBTargetedDonationsStreamPolicy": {
+			"Value": {
+				"Ref": "TIDynamoDBTargetedDonationsStream"
+			},
+			"Export": {
+				"Name": "TIDynamoDBTargetedDonationsStreamPolicy"
+			}
+		}
+	}
+}

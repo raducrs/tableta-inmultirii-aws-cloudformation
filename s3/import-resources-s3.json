@@ -1,0 +1,16 @@
+[
+  {
+      "ResourceType":"AWS::S3::Bucket",
+      "LogicalResourceId":"TIS3Upload",
+      "ResourceIdentifier": {
+        "BucketName":"tableta-inmultirii-upload"
+      }
+  },
+  {
+      "ResourceType":"AWS::S3::Bucket",
+      "LogicalResourceId":"TIS3Public",
+      "ResourceIdentifier": {
+        "BucketName":"tableta-inmultirii-public"
+      }
+  }
+]
