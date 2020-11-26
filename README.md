@@ -4,7 +4,7 @@ This repository contains part of the ```Cloudformation``` templates for building
 
 Follow each of the stacks instructions in the order listed below
 
-- [dynamodb](dynamodb)
+- [dynamodb](dyamodb)
 - [dynamodb-policies](dynamodb-policies)
 - [s3](s3)
 - [s3-policies](s3-policies)
