@@ -1,3 +1,4 @@
+# Tableta Inmultirii AWS Cloudfront Infra
 
 This repository contains part of the ```Cloudformation``` templates for building the platform infrastructure
 
@@ -11,3 +12,4 @@ Follow each of the stacks instructions in the order listed below
 - [lambdas](lambdas)
 - [api gateway](gateway)
 - [policies](policies)
+
