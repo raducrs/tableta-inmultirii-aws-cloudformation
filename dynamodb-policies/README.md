@@ -3,7 +3,7 @@ Named IAM policies have special conditions when beeing build using ```Cloudforma
 
 **Warning: you must create policy names that are at least 20 characters longs (the -Policy suffix was added for this reason)**
 
-**You must have deployed the [dynamodb stack](../dynamodb) before**
+**You must have deployed the [dynamodb stack](../dyamodb) before**
 
 Run command
 
